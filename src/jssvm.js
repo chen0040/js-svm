@@ -33,10 +33,14 @@ var jssvm = jssvm || {};
         if(!config.C){
             config.C = 1.0;
         }
+        if(!config.trace){
+            config.trace = false;
+        }
         
         this.iterations = config.iterations;
         this.alpha = config.alpha;
         this.C = config.C;
+        this.trace = config.trace;
     };
     
     LinearSvm.prototype.fit = function(data) {
@@ -67,6 +71,9 @@ var jssvm = jssvm || {};
             for(var d = 0; d < this.dim; ++d){
                 this.theta[d] = this.theta[d] - this.alpha * theta_delta[d];        
             }
+            if(this.trace){
+                console.log('cost: ' + this.cost(X, Y, this.theta));
+            }
         }
         
         return {
@@ -75,7 +82,8 @@ var jssvm = jssvm || {};
             config: {
                 alpha: this.alpha,
                 lambda: this.lambda,
-                iterations: this.iterations 
+                iterations: this.iterations,
+                trace: this.trace
             }
         }
     };
@@ -110,6 +118,9 @@ var jssvm = jssvm || {};
         }
         
         sum += this.dotProduct(theta, theta) / 2.0;
+        
+        sum /= N;
+        return sum;
     };
     
     LinearSvm.prototype.cost1 = function(x_i, y_i, theta) {
@@ -132,7 +143,7 @@ var jssvm = jssvm || {};
     LinearSvm.prototype.dotProduct = function(x_i, theta) {
         var sum = 0;
         for(var d=0; d < this.dim; ++d){
-            sum += x_i[j] * theta[j];
+            sum += x_i[d] * theta[d];
         }
         return sum;
     };
