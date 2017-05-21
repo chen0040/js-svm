@@ -1,6 +1,26 @@
 var jssvm = jssvm || {};
 
 (function(jsr){
+    jsr.small = function(){
+        var one = 1.0;
+        var two = 2.0;
+        var tsmall = one / two;
+        var z = tsmall * one + one;
+        while(z > 1.0) {
+            tsmall = tsmall / two;
+            z = tsmall * one + one;
+        }
+        return tsmall * two * two;
+    };
+    
+    jsr.deltaStep = function(value){
+        var rstep = Math.sqrt(this.small());  
+        var temp = Math.max(1.0, Math.abs(value));
+        var delta = Math.max(0.0, Math.abs(rstep * temp));
+        if(value < 0) delta = -delta;
+        return delta;
+    };
+    
 	var LinearSvm = function(config) {
         config = config || {};
         
@@ -60,8 +80,10 @@ var jssvm = jssvm || {};
         }
     };
     
+    
+    
     LinearSvm.prototype.smallStep = function(theta, d) {
-      return 0.00000000001;  
+      return jsr.deltaStep(theta[d]);  
     };
     
     LinearSvm.prototype.grad = function(X, Y, theta) {
