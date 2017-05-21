@@ -21,6 +21,15 @@ var jssvm = jssvm || {};
         return delta;
     };
     
+    jsr.dotProduct = function(x_i, theta) {
+        var sum = 0;
+        var dim = theta.length;
+        for(var d=0; d < dim; ++d){
+            sum += x_i[d] * theta[d];
+        }
+        return sum;
+    };
+    
 	var LinearSvm = function(config) {
         config = config || {};
         
@@ -117,14 +126,14 @@ var jssvm = jssvm || {};
             sum += this.C * (y_i * this.cost1(x_i, y_i, theta) + (1-y_i) * this.cost0(x_i, y_i, theta));
         }
         
-        sum += this.dotProduct(theta, theta) / 2.0;
+        sum += jsr.dotProduct(theta, theta) / 2.0;
         
         sum /= N;
         return sum;
     };
     
     LinearSvm.prototype.cost1 = function(x_i, y_i, theta) {
-        var z = this.dotProduct(x_i, theta);
+        var z = jsr.dotProduct(x_i, theta);
         if(z > 1){
             return 0;
         }
@@ -132,7 +141,7 @@ var jssvm = jssvm || {};
     };
     
     LinearSvm.prototype.cost0 = function(x_i, y_i, theta) {
-        var z = this.dotProduct(x_i, theta);
+        var z = jsr.dotProduct(x_i, theta);
         if(z < -1) {
             return 0;
         }
@@ -140,13 +149,7 @@ var jssvm = jssvm || {};
             
     };
     
-    LinearSvm.prototype.dotProduct = function(x_i, theta) {
-        var sum = 0;
-        for(var d=0; d < this.dim; ++d){
-            sum += x_i[d] * theta[d];
-        }
-        return sum;
-    };
+
     
     LinearSvm.prototype.transform = function(x) {
         if(x[0].length){ // x is a matrix            
@@ -164,7 +167,7 @@ var jssvm = jssvm || {};
             x_i.push(x[j]);
         }
         
-        return this.dotProduct(x_i, this.theta);  
+        return jsr.dotProduct(x_i, this.theta);  
     };
     
     
