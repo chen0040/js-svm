@@ -115,6 +115,25 @@ var jssvm = jssvm || {};
         return sum;
     };
     
+    LinearSvm.prototype.transform = function(x) {
+        if(x[0].length){ // x is a matrix            
+            var predicted_array = [];
+            for(var i=0; i < x.length; ++i){
+                var predicted = this.transform(x[i]);
+                predicted_array.push(predicted);
+            }
+            return predicted_array;
+        }
+        
+        var x_i = [];
+        x_i.push(1.0);
+        for(var j=0; j < x.length; ++j){
+            x_i.push(x[j]);
+        }
+        
+        return this.dotProduct(x_i, this.theta);  
+    };
+    
     
     jsr.LinearSvm = LinearSvm;
 
