@@ -13,6 +13,46 @@ var jssvm = jssvm || {};
         return tsmall * two * two;
     };
     
+    jsr.quickSort = function(a, comparer){
+        jsr._quickSort(a, 0, a.length-1, comparer);
+    };
+    
+    jsr._quickSort = function(a, lo, hi, comparer) {
+        if(lo >= hi) return;
+        
+        var j = jsr._partition(a, lo, hi, comparer);
+        jsr._quickSort(a, lo, j-1, comparer);
+        jsr._quickSort(a, j+1, hi, comparer);
+    };
+    
+    jsr._partition = function(a, lo, hi, comparer){
+        var v = a[lo];
+        var i = lo, j = hi+1;
+        while(true){
+            while(comparer(v, a[++i]) > 0){
+                if(i >= hi) break;
+            }
+            while(comparer(v, a[--j]) < 0) {
+                if(j <= lo) break;
+            }
+            
+            if(i >= j){
+                break;
+            }
+            
+            jsr._exchange(a, i, j);
+        }
+        
+        jsr._exchange(a, lo, j);
+        return j;
+    };
+    
+    jsr._exchange = function(a, i, j) {
+        var tmp = a[i];
+        a[i] = a[j];
+        a[j] = tmp;
+    };
+    
     jsr.deltaStep = function(value){
         var rstep = Math.sqrt(this.small());  
         var temp = Math.max(1.0, Math.abs(value));
@@ -172,6 +212,38 @@ var jssvm = jssvm || {};
     
     
     jsr.LinearSvm = LinearSvm;
+    
+    var BinarySvmClassifier = function(config){
+        this.classifier = new jsr.LinearSvm(config);
+    };
+    
+    BinarySvmClassifier.prototype.fit = function(data){
+        var result = this.classifier.fit(data);
+        
+        var dim = this.classifier.dim;
+        
+        var scores = this.classifier.transform(data);
+        
+        this.threshold = null;
+        
+        var N = data.length;
+        for(var i=0; i < N; ++i){
+            var label = data[i][dim-1];
+            if(label == 1){
+                if(this.threshold == null || this.threshold > scores[i]){
+                    this.threshold = scores[i];
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    BinarySvmClassifier.prototype.transform = function(x) {
+        return this.classifier.transform(x) > this.threshold ? 1 : 0;
+    };
+    
+    jsr.BinarySvmClassifier = BinarySvmClassifier;
 
 })(jssvm);
 
