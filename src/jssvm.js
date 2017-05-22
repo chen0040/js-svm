@@ -417,19 +417,33 @@ var jssvm = jssvm || {};
     jsr.KernelSvm = KernelSvm;
     
     var BinarySvmClassifier = function(config){
-        this.classifier = new jsr.LinearSvm(config);
+        if(!config.kernel){
+            config.kernel = 'linear';
+        }
+        if(!config.sigma) {
+            config.sigma = 1.0;
+        }
+        this.kernel = config.kernel;
+        if(config.kernel == 'linear'){
+            this.classifier = new jsr.LinearSvm(config);
+        } else if(config.kernel == 'gaussian') {
+            this.classifier = new jsr.KernelSvm(config);
+        } else {
+            this.classifier = new jsr.LinearSvm(config);
+        }
     };
     
     BinarySvmClassifier.prototype.fit = function(data){
         var result = this.classifier.fit(data);
         
+        result.kernel = this.kernel;
         
         
         return result;
     }
     
     BinarySvmClassifier.prototype.transform = function(x) {
-        return this.classifier.transform(x) > this.threshold ? 1 : 0;
+        return this.classifier.transform(x) > this.classifier.threshold ? 1 : 0;
     };
     
     jsr.BinarySvmClassifier = BinarySvmClassifier;
@@ -445,9 +459,18 @@ var jssvm = jssvm || {};
         if(!config.C) {
             config.C = C;
         }
+        if(!config.kernel) {
+            config.kernel = 'linear';
+        }
+        if(!config.sigma) {
+            config.sigma = 1.0;
+        }
+        
         this.alpha = config.alpha;
         this.C = config.C;
         this.iterations = config.iterations;
+        this.sigma = config.sigma;
+        this.kernel = config.kernel;
     };
     
     MultiClassSvmClassifier.prototype.fit = function(data, classes) {
@@ -477,11 +500,27 @@ var jssvm = jssvm || {};
         var result = {};
         for(var k = 0; k < this.classes.length; ++k){
             var c = this.classes[k];
-            this.classifiers[c] = new jsr.LinearSvm({
-                alpha: this.alpha,
-                C: this.C,
-                iterations: this.iterations
-            });
+            
+            if(this.kernel == 'linear'){
+                this.classifiers[c] = new jsr.LinearSvm({
+                    alpha: this.alpha,
+                    C: this.C,
+                    iterations: this.iterations
+                });
+            } else if(this.kernel == 'gaussian'){
+                this.classifiers[c] = new jsr.KernelSvm({
+                    alpha: this.alpha,
+                    C: this.C,
+                    iterations: this.iterations,
+                    sigma: this.sigma
+                });
+            } else {
+                this.classifiers[c] = new jsr.LinearSvm({
+                    alpha: this.alpha,
+                    C: this.C,
+                    iterations: this.iterations
+                });
+            }
             var data_c = [];
             for(var i=0; i < N; ++i){
                 var row = [];
@@ -493,6 +532,8 @@ var jssvm = jssvm || {};
             }
             result[c] = this.classifiers[c].fit(data_c);
         }
+        
+        result.kernel = this.kernel;
         return result;
     };
     
@@ -512,8 +553,11 @@ var jssvm = jssvm || {};
         var best_c = '';
         for(var k = 0; k < this.classes.length; ++k) {
             var c = this.classes[k];
-            var prob_c = this.classifiers[c].transform(x) - this.classifiers[c].threshold;
-            if(max_prob < prob_c){
+            var prob_c;
+
+            
+            prob_c = this.classifiers[c].transform(x) - this.classifiers[c].threshold;
+            if(max_prob <= prob_c){
                 max_prob = prob_c;
                 best_c = c;
             }
