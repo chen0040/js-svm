@@ -37,8 +37,8 @@ describe("Test binary svm classifier", function() {
        console.log(result);
         
        for(var i=0; i < testingData.length; ++i){
-           var probabilityOfSpeciesBeingIrisVirginica = svm.transform(testingData[i]);
-           console.log("actual: " + testingData[i][4] + " predicted: " + probabilityOfSpeciesBeingIrisVirginica);
+           var predicted = svm.transform(testingData[i]);
+           console.log("actual: " + testingData[i][4] + " predicted: " + predicted);
        }
     });
 });
