@@ -125,12 +125,27 @@ var jssvm = jssvm || {};
             }
         }
         
+        var scores = this.transform(data);
+        
+        this.threshold = null;
+        
+        var N = data.length;
+        for(var i=0; i < N; ++i){
+            var label = data[i][this.dim-1];
+            if(label == 1){
+                if(this.threshold == null || this.threshold > scores[i]){
+                    this.threshold = scores[i];
+                }
+            }
+        }
+        
         return {
             theta: this.theta,
             cost: this.cost(X, Y, this.theta),
+            threshold: this.threshold,
             config: {
                 alpha: this.alpha,
-                lambda: this.lambda,
+                C: this.C,
                 iterations: this.iterations,
                 trace: this.trace
             }
@@ -220,21 +235,7 @@ var jssvm = jssvm || {};
     BinarySvmClassifier.prototype.fit = function(data){
         var result = this.classifier.fit(data);
         
-        var dim = this.classifier.dim;
         
-        var scores = this.classifier.transform(data);
-        
-        this.threshold = null;
-        
-        var N = data.length;
-        for(var i=0; i < N; ++i){
-            var label = data[i][dim-1];
-            if(label == 1){
-                if(this.threshold == null || this.threshold > scores[i]){
-                    this.threshold = scores[i];
-                }
-            }
-        }
         
         return result;
     }
@@ -244,6 +245,98 @@ var jssvm = jssvm || {};
     };
     
     jsr.BinarySvmClassifier = BinarySvmClassifier;
+    
+    var MultiClassSvmClassifier = function(config){
+        var config = config || {};
+        if(!config.alpha){
+            config.alpha = 0.001;
+        }
+        if(!config.iterations) {
+            config.iterations = 100;
+        }
+        if(!config.C) {
+            config.C = C;
+        }
+        this.alpha = config.alpha;
+        this.C = config.C;
+        this.iterations = config.iterations;
+    };
+    
+    MultiClassSvmClassifier.prototype.fit = function(data, classes) {
+        this.dim = data[0].length;
+        var N = data.length;
+        
+        if(!classes){
+            classes = [];
+            for(var i=0; i < N; ++i){
+                var found = false;
+                var label = data[i][this.dim-1];
+                for(var j=0; j < classes.length; ++j){
+                    if(label == classes[j]){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    classes.push(label);
+                }
+            }
+        }
+        
+        this.classes = classes;
+        
+        this.classifiers = {};
+        var result = {};
+        for(var k = 0; k < this.classes.length; ++k){
+            var c = this.classes[k];
+            this.classifiers[c] = new jsr.LinearSvm({
+                alpha: this.alpha,
+                C: this.C,
+                iterations: this.iterations
+            });
+            var data_c = [];
+            for(var i=0; i < N; ++i){
+                var row = [];
+                for(var j=0; j < this.dim-1; ++j){
+                    row.push(data[i][j]);
+                }
+                row.push(data[i][this.dim-1] == c ? 1 : 0);
+                data_c.push(row);
+            }
+            result[c] = this.classifiers[c].fit(data_c);
+        }
+        return result;
+    };
+    
+    MultiClassSvmClassifier.prototype.transform = function(x) {
+        if(x[0].length){ // x is a matrix            
+            var predicted_array = [];
+            for(var i=0; i < x.length; ++i){
+                var predicted = this.transform(x[i]);
+                predicted_array.push(predicted);
+            }
+            return predicted_array;
+        }
+        
+        
+        
+        var max_prob = 0.0;
+        var best_c = '';
+        for(var k = 0; k < this.classes.length; ++k) {
+            var c = this.classes[k];
+            var prob_c = this.classifiers[c].transform(x) - this.classifiers[c].threshold;
+            if(max_prob < prob_c){
+                max_prob = prob_c;
+                best_c = c;
+            }
+        }
+        
+        return best_c;
+    }
+    
+    
+    
+    jsr.MultiClassSvmClassifier = MultiClassSvmClassifier;
 
 })(jssvm);
 
