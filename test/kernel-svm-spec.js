@@ -2,14 +2,15 @@ var expect    = require("chai").expect;
 var jssvm = require("../src/jssvm");
 var iris = require('js-datasets-iris');
 
-describe("Test linear svm", function() {
+describe("Test kernel svm", function() {
 
   describe("solve the binary classification problem of iris data for which species class == Iris-virginica", function(){
-       var svm = new jssvm.LinearSvm({
+       var svm = new jssvm.KernelSvm({
            alpha: 0.01,
            iterations: 1000,
            C: 5.0,
-           trace: false
+           trace: false,
+           sigma: 1.0
        });
         
        iris.shuffle();
@@ -38,7 +39,7 @@ describe("Test linear svm", function() {
         
        for(var i=0; i < testingData.length; ++i){
            var probabilityOfSpeciesBeingIrisVirginica = svm.transform(testingData[i]);
-           console.log("linear svm test: actual: " + testingData[i][4] + " probability of being Iris-virginica: " + probabilityOfSpeciesBeingIrisVirginica);
+           console.log("kernel svm test: actual: " + testingData[i][4] + " probability of being Iris-virginica: " + probabilityOfSpeciesBeingIrisVirginica);
        }
         
        it('should have a cost of lower than 5', function(){
