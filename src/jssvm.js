@@ -95,13 +95,13 @@ var jssvm = jssvm || {};
         config = config || {};
         
         if(!config.iterations){
-            config.iterations = 100;
+            config.iterations = 1000;
         }
         if(!config.alpha){
-            config.alpha = 0.0001;
+            config.alpha = 0.01;
         }
         if(!config.C){
-            config.C = 1.0;
+            config.C = 5.0;
         }
         if(!config.trace){
             config.trace = false;
@@ -253,13 +253,13 @@ var jssvm = jssvm || {};
         config = config || {};
         
         if(!config.iterations){
-            config.iterations = 100;
+            config.iterations = 1000;
         }
         if(!config.alpha){
-            config.alpha = 0.0001;
+            config.alpha = 0.01;
         }
         if(!config.C){
-            config.C = 1.0;
+            config.C = 5.0;
         }
         if(!config.trace){
             config.trace = false;
@@ -417,6 +417,7 @@ var jssvm = jssvm || {};
     jsr.KernelSvm = KernelSvm;
     
     var BinarySvmClassifier = function(config){
+        var config = config || {};
         if(!config.kernel){
             config.kernel = 'linear';
         }
@@ -451,13 +452,13 @@ var jssvm = jssvm || {};
     var MultiClassSvmClassifier = function(config){
         var config = config || {};
         if(!config.alpha){
-            config.alpha = 0.001;
+            config.alpha = 0.01;
         }
         if(!config.iterations) {
-            config.iterations = 100;
+            config.iterations = 1000;
         }
         if(!config.C) {
-            config.C = C;
+            config.C = 5.0;
         }
         if(!config.kernel) {
             config.kernel = 'linear';

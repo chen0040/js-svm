@@ -22,12 +22,7 @@ The sample code below show how to use SVM binary classifier on the iris datsets 
 var jssvm = require('js-svm');
 var iris = require('js-datasets-iris');
 
-var svm = new jssvm.BinarySvmClassifier({
-   alpha: 0.01,
-   iterations: 1000,
-   C: 5.0,
-   trace: false
-});
+var svm = new jssvm.BinarySvmClassifier();
 
 iris.shuffle();
 
@@ -59,6 +54,17 @@ for(var i=0; i < testingData.length; ++i){
 }
 ```
 
+To configure the BinarySvmClassifier, use the following code when it is created:
+
+```javascript
+var svm = new jssvm.BinarySvmClassifier({
+   alpha: 0.01, // learning rate
+   iterations: 1000, // maximum iterations
+   C: 5.0, // panelty term
+   trace: false // debug tracing
+});
+```
+
 ### Multi-Class Classification using One-vs-All Logistic Regression
 
 The sample code below illustrates how to run the multi-class classifier on the iris datasets to classifiy the species of each data row:
@@ -67,11 +73,7 @@ The sample code below illustrates how to run the multi-class classifier on the i
 var jssvm = require('js-svm');
 var iris = require('js-datasets-iris');
 
-var classifier = new jssvm.MultiClassSvmClassifier({
-   alpha: 0.001,
-   iterations: 1000,
-   C: 5.0
-});
+var classifier = new jssvm.MultiClassSvmClassifier();
 
 iris.shuffle();
 
@@ -101,6 +103,42 @@ for(var i=0; i < testingData.length; ++i){
    var predicted = classifier.transform(testingData[i]);
    console.log("svm prediction testing: actual: " + testingData[i][4] + " predicted: " + predicted);
 }
+```
+
+To configure the MultiClassSvmClassifier, use the following code when it is created:
+
+```javascript
+var classifier = new jssvm.MultiClassSvmClassifier({
+   alpha: 0.01, // learning rate
+   iterations: 1000, // maximum iterations
+   C: 5.0 // panelty term
+   sigma: 1.0 // the standard deviation for the gaussian kernel
+});
+```
+
+### Switch between linear and guassian kernel
+
+By default the kernel used by the binary and multi-class classifier is "linear" which can be printed by:
+
+```javascript
+console.log(classifier.kernel);
+```
+
+To switch to use gaussian kernel, put the property 'kernel: "gaussian"' in the config data when the classifier is created:
+
+```javascript
+var svm = new jssvm.BinarySvmClassifier({
+   ...,
+   kernel: 'gaussian'
+});
+
+....
+
+var svm = new jssvm.MultiClassSvmClassifier({
+   ...,
+   kernel: 'gaussian'
+});
+
 ```
 
 
