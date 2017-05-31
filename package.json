@@ -1,6 +1,6 @@
 {
   "name": "js-svm",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Package implements linear svm and kernel svm that supports binary and mult-class classification",
   "author": "Xianshun Chen",
   "contributors": [

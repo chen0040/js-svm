@@ -573,6 +573,7 @@ var jssvm = jssvm || {};
 
 })(jssvm);
 
+var module = module || {};
 if(module) {
 	module.exports = jssvm;
 }
