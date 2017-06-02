@@ -1,6 +1,8 @@
 # js-svm
 Package provides javascript implementation of linear SVM and SVM with gaussian kernel
 
+[![Build Status](https://travis-ci.org/chen0040/js-svm.svg?branch=master)](https://travis-ci.org/chen0040/js-svm) [![Coverage Status](https://coveralls.io/repos/github/chen0040/js-svm/badge.svg?branch=master)](https://coveralls.io/github/chen0040/js-svm?branch=master) 
+
 # Features
 
 * Support for binary classification
