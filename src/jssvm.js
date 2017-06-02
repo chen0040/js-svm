@@ -253,7 +253,7 @@ var jssvm = jssvm || {};
         config = config || {};
         
         if(!config.iterations){
-            config.iterations = 1000;
+            config.iterations = 100;
         }
         if(!config.alpha){
             config.alpha = 0.01;

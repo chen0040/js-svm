@@ -36,7 +36,7 @@ describe("Test kernel svm", function() {
   describe("solve the binary classification problem of iris data for which species class == Iris-virginica", function(){
        var svm = new jssvm.KernelSvm({
            alpha: 0.01,
-           iterations: 1000,
+           iterations: 5,
            C: 5.0,
            trace: false,
            sigma: 1.0
