@@ -44,7 +44,7 @@ describe("Test multi-class classification using logistic regression", function()
     describe("Use kernel svm solve the multi-class classification problem of iris data", function(){
        var classifier = new jssvm.MultiClassSvmClassifier({
            alpha: 0.001,
-           iterations: 1000,
+           iterations: 100,
            C: 5.0,
            kernel: 'gaussian'
        });
