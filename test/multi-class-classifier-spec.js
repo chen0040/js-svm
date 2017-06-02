@@ -45,7 +45,8 @@ describe("Test multi-class classification using logistic regression", function()
        var classifier = new jssvm.MultiClassSvmClassifier({
            alpha: 0.001,
            iterations: 1000,
-           C: 5.0
+           C: 5.0,
+           kernel: 'gaussian'
        });
         
        iris.shuffle();
