@@ -148,7 +148,7 @@ Include the "node_modules/js-svm/build/jssvm.min.js" (or "node_modules/js-svm/sr
 
 The demo code in HTML can be found in the following files within the package:
 
-* example-binary-classifier.html
-* example-multi-class-classifier.html
+* [example-binary-classifier.html](https://rawgit.com/chen0040/js-svm/master/example-binary-classifier.html)
+* [example-multi-class-classifier.html](https://rawgit.com/chen0040/js-svm/master/example-multi-class-classifier.html)
 
 
