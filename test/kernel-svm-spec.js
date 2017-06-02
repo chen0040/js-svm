@@ -38,7 +38,7 @@ describe("Test kernel svm", function() {
            alpha: 0.01,
            iterations: 5,
            C: 5.0,
-           trace: false,
+           trace: true,
            sigma: 1.0
        });
         
