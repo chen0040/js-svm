@@ -53,7 +53,7 @@ describe("Test binary svm classifier", function() {
         
        iris.shuffle();
         
-       var trainingDataSize = Math.round(iris.rowCount * 0.9);
+       var trainingDataSize = Math.round(iris.rowCount * 0.5);
        var trainingData = [];
        var testingData = [];
        for(var i=0; i < iris.rowCount ; ++i) {
@@ -77,6 +77,7 @@ describe("Test binary svm classifier", function() {
         
        for(var i=0; i < testingData.length; ++i){
            var predicted = svm.transform(testingData[i]);
+           if(i >= 10) continue;
            console.log("kernel svm binary classifier testing: actual: " + testingData[i][4] + " predicted: " + predicted);
        }
     });
