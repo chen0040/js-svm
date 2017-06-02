@@ -146,9 +146,9 @@ var svm = new jssvm.MultiClassSvmClassifier({
 
 Include the "node_modules/js-svm/build/jssvm.min.js" (or "node_modules/js-svm/src/jssvm.js") in your HTML \<script\> tag
 
-The code in the script tag looks sth like this:
+The demo code in HTML can be found in the following files within the package:
 
-```javascript
-var classifier = new jssvm.BinarySvmClassifier();
-```
+* example-binary-classifier.html
+* example-multi-class-classifier.html
+
 
